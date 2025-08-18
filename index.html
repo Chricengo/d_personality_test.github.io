@@ -3,354 +3,168 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>性格測試 — LEGO 自癒工作坊</title>
+  <title>你的理想人生 -- 性格測驗（更新）</title>
   <style>
     :root{
-      --bg:#f6fbff;
-      --card:#ffffff;
-      --accent:#16a34a; /* 綠色主色 */
-      --muted:#6b7280;
-      --glass: rgba(255,255,255,0.7);
-      font-family: "Noto Sans TC", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --bg:#f6fbff; --card:#ffffff; --accent:#16a34a; --muted:#6b7280;
+      font-family:"Noto Sans TC", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --desktop-max-width:980px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0;
-      background: linear-gradient(180deg,#f0f9f4 0%, #fff 60%);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-      color:#0f172a;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-
-    .shell{
-      width:100%;
-      max-width:980px;
-      background:var(--card);
-      border-radius:12px;
-      box-shadow:0 14px 40px rgba(6,8,23,0.08);
-      overflow:hidden;
-      display:flex;
-      gap:0;
-    }
-
-    /* main quiz area */
-    .main{
-      flex:1 1 640px;
-      padding:28px;
-      min-width:0;
-    }
-    header h1{
-      margin:0 0 6px 0;
-      font-size:20px;
-    }
-    header p{margin:0 0 14px 0;color:var(--muted);font-size:14px}
-
-    .step{
-      display:none;
-      animation:fadeIn .25s ease;
-    }
+    body{margin:0;background:linear-gradient(180deg,#f0f9f4 0%, #fff 60%);display:flex;align-items:flex-start;justify-content:center;padding:12px;color:#0f172a;font-size:15px;line-height:1.45}
+    .shell{width:100%;max-width:var(--desktop-max-width);background:var(--card);border-radius:12px;box-shadow:0 14px 40px rgba(6,8,23,0.08);overflow:hidden;display:flex}
+    .main{flex:1 1 640px;padding:20px;min-width:0}
+    header h1{margin:0 0 6px 0;font-size:18px}
+    header p{margin:0 0 14px 0;color:var(--muted);font-size:13px}
+    .step{display:none;animation:fadeIn .25s ease}
     .step.active{display:block}
-
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,1));
-      border-radius:10px;
-      padding:18px;
-      margin-bottom:16px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-    }
-
-    .question{
-      font-weight:700;
-      margin-bottom:12px;
-      font-size:16px;
-    }
-
-    .choices{display:flex;flex-direction:column;gap:10px}
-    .choice-btn{
-      width:100%;
-      text-align:left;
-      padding:12px 14px;
-      border-radius:10px;
-      border:1px solid rgba(15,23,42,0.06);
-      background:white;
-      cursor:pointer;
-      font-size:15px;
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-    }
-    .choice-btn:hover{transform:translateY(-3px); box-shadow:0 10px 28px rgba(13,38,89,0.06)}
-    .choice-btn.selected{
-      border-color:var(--accent);
-      box-shadow:0 10px 30px rgba(22,163,74,0.12);
-      outline:4px solid rgba(22,163,74,0.06);
-    }
-
-    .nav{
-      display:flex;
-      gap:10px;
-      margin-top:8px;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .nav .left{color:var(--muted); font-size:13px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.95),#fff);border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
+    .question{font-weight:700;margin-bottom:10px;font-size:15px}
+    .choices{display:flex;flex-direction:column;gap:10px;position:relative;z-index:2}
+    .choice-btn{width:100%;text-align:left;padding:11px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:white;cursor:pointer;font-size:15px;transition:transform .12s,box-shadow .12s,border-color .12s}
+    .choice-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(13,38,89,0.05)}
+    .choice-btn.selected{border-color:var(--accent);box-shadow:0 8px 22px rgba(22,163,74,0.12);outline:3px solid rgba(22,163,74,0.06)}
+    .nav{display:flex;gap:10px;margin-top:8px;justify-content:space-between;align-items:center}
+    .nav .left{color:var(--muted);font-size:13px}
     .nav .right{display:flex;gap:8px}
-    .btn{
-      padding:9px 14px;
-      border-radius:8px;
-      border:0;
-      cursor:pointer;
-      font-weight:700;
-      font-size:14px;
-    }
+    .btn{padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700;font-size:14px}
     .btn.ghost{background:transparent;color:var(--muted);border:1px solid rgba(15,23,42,0.06)}
-    .btn.primary{background:var(--accent);color:white;box-shadow:0 8px 24px rgba(22,163,74,0.18)}
-    .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;transform:none}
-
-    /* side panel */
-    .side{
-      width:320px;
-      background:linear-gradient(180deg,#f7fffb, #f3fff6);
-      padding:20px;
-      border-left:1px solid rgba(15,23,42,0.03);
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      min-width:220px;
-    }
-    .progress{
-      height:10px;
-      background:rgba(15,23,42,0.06);
-      border-radius:999px;
-      overflow:hidden;
-    }
-    .progress > i{
-      display:block;height:100%;
-      width:0%;
-      background:linear-gradient(90deg,var(--accent),#059669);
-      transition:width .28s ease;
-    }
+    .btn.primary{background:var(--accent);color:white;box-shadow:0 8px 20px rgba(22,163,74,0.16)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .side{width:320px;background:linear-gradient(180deg,#f7fffb,#f3fff6);padding:16px;border-left:1px solid rgba(15,23,42,0.03);display:flex;flex-direction:column;gap:10px;min-width:180px}
+    .progress{height:10px;background:rgba(15,23,42,0.06);border-radius:999px;overflow:hidden}
+    .progress>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#059669);transition:width .28s}
     .meta h3{margin:0;font-size:15px}
     .meta p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
-
-    .result{
-      background:var(--card);
-      border-radius:10px;
-      padding:12px;
-      box-shadow:0 6px 18px rgba(12,15,24,0.04);
-      display:none;
-    }
+    .result{background:var(--card);border-radius:10px;padding:10px;box-shadow:0 6px 18px rgba(12,15,24,0.04);display:none}
     .result.visible{display:block}
-
-    footer.small{font-size:12px;color:var(--muted);margin-top:auto}
-
-    @keyframes fadeIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
-
-    /* responsive */
-    @media (max-width:880px){
-      .shell{flex-direction:column}
-      .side{width:100%}
-      .main{padding:18px}
-    }
-
-    /* special styling for final LEGO title */
-    .lego-title{
-      font-weight:900;
-      color:var(--accent);
-      font-size:50px;
-      line-height:1;
-      letter-spacing:2px;
-      margin:6px 0 10px 0;
-    }
-
-    /* small accessibility helpers */
-    .visually-hidden{
-      position:absolute !important;
-      height:1px;width:1px;
-      overflow:hidden;
-      clip:rect(1px,1px,1px,1px);
-      white-space:nowrap;
-    }
-
-    /* share button */
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .lego-row{display:flex;align-items:center;gap:12px}
+    .title-top{font-size:18px;font-weight:800;margin:0 0 6px 0}
+    .lego-title{font-weight:900;color:var(--accent);font-size:46px;line-height:1;letter-spacing:2px;margin:6px 0 10px 0}
+    .main-type{margin-top:8px;margin-bottom:8px;font-size:15px;color:#0f172a;font-weight:700}
+    .result-footer{margin-top:12px;padding:10px;border-radius:6px;border:1px solid rgba(15,23,42,0.04);background:#ffffff;color:var(--muted);font-size:14px;line-height:1.45;max-height:220px;overflow:auto}
     .share-row{display:flex;gap:8px;align-items:center;margin-top:12px}
-    .share-btn{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      background:linear-gradient(90deg,var(--accent),#059669);
-      color:#fff;
-      padding:8px 12px;
-      border-radius:8px;
-      border:0;
-      cursor:pointer;
-      font-weight:700;
-      box-shadow:0 8px 22px rgba(6,95,70,0.12);
-    }
-    .copy-btn{
-      padding:8px 10px;
-      border-radius:8px;
-      border:1px solid rgba(15,23,42,0.06);
-      background:white;
-      cursor:pointer;
-      font-weight:700;
-    }
+    .share-btn,.copy-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;border-radius:8px;font-weight:700;cursor:pointer}
+    .share-btn{background:linear-gradient(90deg,var(--accent),#059669);color:#fff;border:0}
+    .copy-btn{background:#fff;border:1px solid rgba(15,23,42,0.06);color:var(--muted)}
+    @media (max-width:480px){ .lego-title{font-size:36px} .main{padding:12px} }
   </style>
 </head>
 <body>
-  <div class="shell" role="application" aria-label="性格測試 — LEGO 自癒工作坊">
+  <div class="shell" role="application" aria-label="你的理想人生 -- 性格測驗">
     <main class="main" aria-live="polite">
-      <p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>
-      <p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>
-            <p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>
-      <p></p><p></p><p></p><p></p>
-        <h1>性格測試</h1>
+      <header>
+        <h1>性格測驗</h1>
         <p>五個章節的簡短測驗。答案沒有對錯，請誠實作答以得到更貼近你的解析。</p>
       </header>
 
-      <!-- Section 1: Introduction -->
       <section id="s1" class="step active" aria-labelledby="s1-title">
         <div class="card">
           <h2 id="s1-title" style="margin-top:0">歡迎</h2>
-          <p>歡迎參與本次的性格測試。透過回答問題可知道你對於人生的看法。</p>
+          <p>歡迎參與本次的性格測驗。透過回答問題可知道你對於人生的看法。</p>
         </div>
-
-        <div class="nav" aria-hidden="false">
+        <div class="nav">
           <div class="left">第 1 / 5 章節</div>
           <div class="right">
-            <button class="btn ghost" id="reset-1" disabled aria-hidden="true">重置</button>
+            <button class="btn ghost" id="reset-1" disabled>重置</button>
             <button class="btn primary" id="to-2">開始</button>
           </div>
         </div>
       </section>
 
-      <!-- Section 2: Past -->
       <section id="s2" class="step" aria-labelledby="s2-title">
         <div class="card">
           <div class="question" id="s2-title">過去篇：如果你能回到過去，你會想：</div>
           <div class="choices" role="radiogroup" aria-labelledby="s2-title">
-            <button class="choice-btn" data-step="2" data-value="1" aria-checked="false" role="radio">
-              1 — 再次感受最快樂的一天
-            </button>
-            <button class="choice-btn" data-step="2" data-value="2" aria-checked="false" role="radio">
-              2 — 改變最後悔的一天
-            </button>
+            <button class="choice-btn" data-step="2" data-value="1" role="radio">1 -- 再次感受最快樂的一天</button>
+            <button class="choice-btn" data-step="2" data-value="2" role="radio">2 -- 改變最後悔的一天</button>
+            <button class="choice-btn" data-step="2" data-value="3" role="radio">3 -- 只是觀察當時的自己，不改變</button>
+            <button class="choice-btn" data-step="2" data-value="4" role="radio">4 -- 與當時重要的人說出當時沒說的話</button>
           </div>
         </div>
-
-        <div class="nav">
-          <div class="left">第 2 / 5 章節</div>
-          <div class="right">
-            <button class="btn ghost" id="back-2">上一步</button>
-            <button class="btn primary" id="to-3" disabled>下一步</button>
-          </div>
-        </div>
+        <div class="nav"><div class="left">第 2 / 5 章節</div><div class="right"><button class="btn ghost" id="back-2">上一步</button><button class="btn primary" id="to-3" disabled>下一步</button></div></div>
       </section>
 
-      <!-- Section 3: Present -->
       <section id="s3" class="step" aria-labelledby="s3-title">
         <div class="card">
           <div class="question" id="s3-title">現在篇：你有一天的假期，你想如何渡過？</div>
           <div class="choices" role="radiogroup" aria-labelledby="s3-title">
-            <button class="choice-btn" data-step="3" data-value="1" aria-checked="false" role="radio">
-              1 — 獨自一人休閒地休息
-            </button>
-            <button class="choice-btn" data-step="3" data-value="2" aria-checked="false" role="radio">
-              2 — 與家人朋友聚會
-            </button>
+            <button class="choice-btn" data-step="3" data-value="1" role="radio">1 -- 獨自一人休閒地休息</button>
+            <button class="choice-btn" data-step="3" data-value="2" role="radio">2 -- 與家人朋友聚會</button>
+            <button class="choice-btn" data-step="3" data-value="3" role="radio">3 -- 外出一日小旅行</button>
+            <button class="choice-btn" data-step="3" data-value="4" role="radio">4 -- 參加興趣課程或工作坊</button>
           </div>
         </div>
-
-        <div class="nav">
-          <div class="left">第 3 / 5 章節</div>
-          <div class="right">
-            <button class="btn ghost" id="back-3">上一步</button>
-            <button class="btn primary" id="to-4" disabled>下一步</button>
-          </div>
-        </div>
+        <div class="nav"><div class="left">第 3 / 5 章節</div><div class="right"><button class="btn ghost" id="back-3">上一步</button><button class="btn primary" id="to-4" disabled>下一步</button></div></div>
       </section>
 
-      <!-- Section 4: Future -->
       <section id="s4" class="step" aria-labelledby="s4-title">
         <div class="card">
           <div class="question" id="s4-title">未來篇：您希望你未來的生活是？</div>
           <div class="choices" role="radiogroup" aria-labelledby="s4-title">
-            <button class="choice-btn" data-step="4" data-value="1" aria-checked="false" role="radio">
-              1 — 富有及自由地環遊世界
-            </button>
-            <button class="choice-btn" data-step="4" data-value="2" aria-checked="false" role="radio">
-              2 — 平淡地與最親的人生活
-            </button>
+            <button class="choice-btn" data-step="4" data-value="1" role="radio">1 -- 富有及自由地環遊世界</button>
+            <button class="choice-btn" data-step="4" data-value="2" role="radio">2 -- 平淡地與最親的人生活</button>
+            <button class="choice-btn" data-step="4" data-value="3" role="radio">3 -- 專注事業或專業成就</button>
+            <button class="choice-btn" data-step="4" data-value="4" role="radio">4 -- 過更有意義的志願或社群貢獻</button>
           </div>
         </div>
-
-        <div class="nav">
-          <div class="left">第 4 / 5 章節</div>
-          <div class="right">
-            <button class="btn ghost" id="back-4">上一步</button>
-            <button class="btn primary" id="to-5" disabled>下一步</button>
-          </div>
-        </div>
+        <div class="nav"><div class="left">第 4 / 5 章節</div><div class="right"><button class="btn ghost" id="back-4">上一步</button><button class="btn primary" id="to-5" disabled>下一步</button></div></div>
       </section>
 
-      <!-- Section 5: Result -->
       <section id="s5" class="step" aria-labelledby="s5-title">
-        <div class="card">
-          <h2 id="s5-title" style="margin-top:0">你的性格是...</h2>
+        <div class="card" id="result-card">
+          <h2 class="title-top">你的性格是...</h2>
 
-          <div id="final-content">
-            <!-- LEGO title + description will be injected by script -->
+          <div class="lego-row">
+            <div style="flex:1 1 auto;">
+              <div class="lego-title" aria-hidden="true">LEGO</div>
+            </div>
           </div>
 
-          <!-- Share area -->
+          <!-- main type appears here -->
+          <div id="main-type" class="main-type" aria-live="polite"></div>
+
+          <div id="final-content"></div>
+
+          <div id="after-conclusion" style="margin-top:10px;color:#0f172a;font-size:14px;line-height:1.6">
+            你的人生是一幅獨一無二的作品，透過砌LEGO自癒工作坊，發揮你無窮的創意和突破框框，了解和反思自己內心的狀況、面對過去或現在的困境，同覓出路和重現盼望！
+          </div>
+
+          <div class="result-footer" id="result-footer" tabindex="0" aria-label="活動資訊（可捲動）">
+            <p style="margin:0 0 8px 0;font-weight:700;">
+              LEGO 自癒工作坊<br>
+              日期：9月6日<br>
+              時間：4:30pm - 6:00pm<br>
+              地點：播道書院跳舞室<br>
+            </p>
+            <div id="footer-abstract" style="margin-top:8px;color:#0f172a;font-size:14px"></div>
+          </div>
+
           <div class="share-row" aria-label="分享測驗">
-            <button class="share-btn" id="share-btn" type="button">分享測驗</button>
-            <button class="copy-btn" id="copy-link" type="button">複製連結</button>
+            <button class="share-btn" id="share-btn" type="button" aria-label="分享測驗">分享測驗</button>
+            <button class="copy-btn" id="copy-link" type="button" aria-label="複製連結">複製連結</button>
           </div>
         </div>
 
-        <div class="nav">
-          <div class="left">第 5 / 5 章節</div>
-          <div class="right">
-            <button class="btn ghost" id="back-5">上一步</button>
-            <button class="btn primary" id="restart">重新開始</button>
-          </div>
-        </div>
+        <div class="nav"><div class="left">第 5 / 5 章節</div><div class="right"><button class="btn ghost" id="back-5">上一步</button><button class="btn primary" id="restart">重新開始</button></div></div>
       </section>
-
     </main>
 
     <aside class="side" aria-hidden="false">
-      <div>
-        <strong>進度</strong>
-        <div class="progress" aria-hidden="true" style="margin-top:8px">
-          <i id="bar"></i>
-        </div>
-      </div>
-
-      <div class="meta">
-        <h3 id="meta-title">尚未開始</h3>
-        <p id="meta-desc">請從第 1 章開始。每個章節選一項後，可前往下一章節。</p>
-      </div>
-
-      <div class="result" id="side-result" aria-live="polite">
-        <h4 id="side-title">你的摘要</h4>
-        <p id="side-text">完成測驗後，這裡會顯示你的結果摘要。</p>
-      </div>
+      <div><strong>進度</strong><div class="progress" aria-hidden="true" style="margin-top:8px"><i id="bar"></i></div></div>
+      <div class="meta"><h3 id="meta-title">尚未開始</h3><p id="meta-desc">請從第 1 章開始。每個章節選一項後，可前往下一章節。</p></div>
+      <div class="result" id="side-result" aria-live="polite"><h4 id="side-title">你的摘要</h4><p id="side-text">完成測驗後，這裡會顯示你的結果摘要。</p></div>
     </aside>
   </div>
 
   <script>
     (function(){
-      // state
       const total = 5;
-      const answers = { 2:null, 3:null, 4:null }; // section 1 is intro, 5 is result
+      const answers = {2:null,3:null,4:null};
       let current = 1;
 
-      // helpers
       function show(step){
         for(let i=1;i<=5;i++){
           const el = document.getElementById('s'+i);
@@ -360,118 +174,108 @@
         current = step;
         updateProgress();
         updateMeta();
-        const heading = document.querySelector('#s'+step+' [id$="-title"]') || document.querySelector('#s'+step+' h2');
-        if(heading) heading.focus?.();
+        if(step>=2 && step<=4) document.querySelectorAll('#s'+step+' .choices').forEach(el=> el.style.display = '');
       }
 
-      function updateProgress(){
-        const bar = document.getElementById('bar');
-        const stepIndex = current;
-        const pct = Math.round((stepIndex-1)/(total-1)*100);
-        bar.style.width = pct + '%';
-      }
+      function updateProgress(){ const bar = document.getElementById('bar'); const pct = Math.round((current-1)/(total-1)*100); bar.style.width = pct + '%'; }
+      function updateMeta(){ const title = document.getElementById('meta-title'); const filled = Object.values(answers).filter(v=>v!==null).length; title.textContent = `已回答 ${filled} / 3（選擇題）`; document.getElementById('meta-desc').textContent = '第 ' + current + ' 章節'; document.getElementById('side-result').classList.toggle('visible', current===5); }
 
-      function updateMeta(){
-        const title = document.getElementById('meta-title');
-        const desc = document.getElementById('meta-desc');
-        const filled = Object.values(answers).filter(v=>v!==null).length;
-        title.textContent = `已回答 ${filled} / 3（選擇題）`;
-        desc.textContent = '第 ' + current + ' 章節';
-        const sideResult = document.getElementById('side-result');
-        if(current === 5){
-          sideResult.classList.add('visible');
-        } else {
-          sideResult.classList.remove('visible');
-        }
-      }
+      // nav wiring
+      const to2 = document.getElementById('to-2');
+      const back2 = document.getElementById('back-2');
+      const back3 = document.getElementById('back-3');
+      const back4 = document.getElementById('back-4');
+      const back5 = document.getElementById('back-5');
+      const restart = document.getElementById('restart');
+      const to3 = document.getElementById('to-3');
+      const to4 = document.getElementById('to-4');
+      const to5 = document.getElementById('to-5');
 
-      // navigation wiring
-      document.getElementById('to-2').addEventListener('click', ()=> show(2));
-      document.getElementById('back-2').addEventListener('click', ()=> show(1));
-      document.getElementById('back-3').addEventListener('click', ()=> show(2));
-      document.getElementById('back-4').addEventListener('click', ()=> show(3));
-      document.getElementById('back-5').addEventListener('click', ()=> show(4));
-      document.getElementById('restart').addEventListener('click', resetAll);
+      if(to2) to2.addEventListener('click', ()=> show(2));
+      if(back2) back2.addEventListener('click', ()=> show(1));
+      if(back3) back3.addEventListener('click', ()=> show(2));
+      if(back4) back4.addEventListener('click', ()=> show(3));
+      if(back5) back5.addEventListener('click', ()=> show(4));
+      if(restart) restart.addEventListener('click', resetAll);
+      if(to3) to3.addEventListener('click', ()=> show(3));
+      if(to4) to4.addEventListener('click', ()=> show(4));
+      if(to5) to5.addEventListener('click', ()=> { renderFinal(); show(5); });
 
-      // next buttons
-      const next2 = document.getElementById('to-3');
-      const next3 = document.getElementById('to-4');
-      const next4 = document.getElementById('to-5');
-      next2.addEventListener('click', ()=> show(3));
-      next3.addEventListener('click', ()=> show(4));
-      next4.addEventListener('click', ()=> {
-        renderFinal();
-        show(5);
-      });
-
-      function disableNext(step){
-        if(step===2) next2.disabled = true;
-        if(step===3) next3.disabled = true;
-        if(step===4) next4.disabled = true;
-      }
-      function enableNext(step){
-        if(step===2) next2.disabled = false;
-        if(step===3) next3.disabled = false;
-        if(step===4) next4.disabled = false;
-      }
-
-      // initialize next-disabled
+      function disableNext(step){ if(step===2 && to3) to3.disabled=true; if(step===3 && to4) to4.disabled=true; if(step===4 && to5) to5.disabled=true; }
+      function enableNext(step){ if(step===2 && to3) to3.disabled=false; if(step===3 && to4) to4.disabled=false; if(step===4 && to5) to5.disabled=false; }
       disableNext(2); disableNext(3); disableNext(4);
 
-      // choice buttons
+      // choices wiring
       document.querySelectorAll('.choice-btn').forEach(btn=>{
-        btn.addEventListener('click', (e)=>{
-          const step = Number(btn.dataset.step);
-          const val = btn.dataset.value;
-          document.querySelectorAll('.choice-btn[data-step="'+step+'"]').forEach(b=>{
-            b.classList.toggle('selected', b===btn);
-            b.setAttribute('aria-checked', b===btn ? 'true' : 'false');
-          });
-          if(step >= 2 && step <= 4){
-            answers[step] = val;
-            enableNext(step);
-            updateMeta();
-          }
+        btn.style.pointerEvents = 'auto';
+        btn.addEventListener('click', function(){
+          const step = Number(this.dataset.step);
+          const val = this.dataset.value;
+          document.querySelectorAll('.choice-btn[data-step="'+step+'"]').forEach(b=>{ b.classList.toggle('selected', b===this); b.setAttribute('aria-checked', b===this ? 'true':'false'); });
+          if(step>=2 && step<=4){ answers[step] = val; enableNext(step); updateMeta(); }
         });
       });
 
-      // render final content when reaching section 5
-      function renderFinal(){
-        const vals = [answers[2], answers[3], answers[4]].map(v=>v||'0');
-        let score1 = vals.filter(v=>v==='1').length;
-        let score2 = vals.filter(v=>v==='2').length;
+      const merged = {
+        '1':'你偏好靜心獨處以恢復能量；建議每週安排一次30至40分鐘無手機靜心或寫日記，觀察情緒變化並溫柔對待自己，給自己休息的許可與練習。',
+        '2':'你從人際連結獲得支持與力量；建議本週主動邀一位親友共度時光，分享近況並用心傾聽，透過互動加深情感與彼此支持。',
+        '3':'你渴望探索、冒險與領導；建議拓展挑戰性計畫或創意任務，設定小目標並接受不完美，從行動中培養自信與影響力。',
+        '4':'你追求意義與影響，喜歡長期投入；建議加入志願團體或擔任短期導師，從小規模貢獻開始建立持續的回饋與成長路徑。'
+      };
+      const labels = {'1':'內向 / 沉澱','2':'關係 / 連結','3':'探索 / 領導','4':'貢獻 / 成長'};
 
-        const final = document.getElementById('final-content');
-        final.innerHTML = `
-          <div class="lego-title" aria-hidden="true">LEGO</div>
-          <p style="margin-top:8px;">
-            你的人生是一幅獨一無二的圖畫，透過砌LEGO自癒工作坊，發揮你無窮的創意和突破框框，了解和反思自己內心的狀況、面對過去或現在的困境，同覓出路和重現盼望！
-          </p>
-          <hr style="margin:14px 0;border:none;border-top:1px solid rgba(15,23,42,0.06)">
-          <div>
-            <strong>小提醒：</strong>
-            <p style="margin:8px 0 0 0;color:var(--muted);font-size:14px">
-              你的選擇偏好： 「選項1」共有 ${score1} 項，「選項2」共有 ${score2} 項。
-              這僅是簡短摘要；深入的探索會在工作坊中幫助你從作品與過程中發現更多。
-            </p>
-          </div>
-
-          <!-- Added paragraph with workshop info as requested -->
-          <p style="margin-top:14px;font-weight:700;">
-            LEGO 自癒工作坊<br>
-            6/9/2025 4:30pm - 6:00pm<br>
-            歡迎你分享這個測驗，邀請朋友參加！
-          </p>
-        `;
-
-        // update aside summary
-        const sideTitle = document.getElementById('side-title');
-        const sideText = document.getElementById('side-text');
-        sideTitle.textContent = '完成：簡短摘要';
-        sideText.textContent = `你選擇了 ${score1} 個「1」與 ${score2} 個「2」。參與 LEGO 自癒工作坊可進一步探索與療癒。`;
+      function computeCountsAndTops(){
+        const counts = {'1':0,'2':0,'3':0,'4':0};
+        [2,3,4].forEach(k=>{ const v=answers[k]; if(v && counts.hasOwnProperty(v)) counts[v]++; });
+        let max=0; Object.values(counts).forEach(n=>{ if(n>max) max=n; });
+        const tops = max===0?[]:Object.keys(counts).filter(k=>counts[k]===max);
+        return {counts,tops};
       }
 
-      // reset function
+      function renderFinal(){
+        const {counts,tops} = computeCountsAndTops();
+        let text='';
+        const mainTypeEl = document.getElementById('main-type');
+        mainTypeEl.textContent = '';
+
+        if(tops.length===0){
+          text='你尚未完成測驗，請返回並回答問題以獲得個人化建議。';
+          document.getElementById('final-content').innerHTML = `<p style="margin-top:8px;font-size:15px;line-height:1.6;color:#0f172a">${text}</p>`;
+          document.getElementById('footer-abstract').innerHTML = '<em style="color:var(--muted)">尚無摘要：請完成測驗以顯示摘要。</em>';
+          document.querySelectorAll('.choices').forEach(el=>el.style.display='none');
+          return;
+        }
+
+        if(tops.length===1){
+          const primary = tops[0];
+          mainTypeEl.textContent = labels[primary];
+          text = merged[primary];
+          document.getElementById('final-content').innerHTML = `<p style="margin-top:8px;font-size:15px;line-height:1.6;color:#0f172a">${text}</p>`;
+          const primaryLine = `<strong>主要類型：</strong>${labels[primary]}`;
+          document.getElementById('footer-abstract').innerHTML = `<div style="font-size:14px;color:#0f172a">${primaryLine}</div>`;
+          document.querySelectorAll('.choices').forEach(el=>el.style.display='none');
+          return;
+        }
+
+        // Tie between multiple top types -> concatenate up to two messages (no random)
+        const chosen = tops.slice(0,2);
+        const primaryLabels = chosen.map(k=>labels[k]).join(' / ');
+        mainTypeEl.textContent = primaryLabels;
+
+        if(chosen.length===2){
+          text = merged[chosen[0]].replace(/。$/, '') + '；' + merged[chosen[1]];
+        } else {
+          text = chosen.map(k=>merged[k]).join('；');
+        }
+        if(text.length > 420) text = text.slice(0,416) + '…';
+
+        document.getElementById('final-content').innerHTML = `<p style="margin-top:8px;font-size:15px;line-height:1.6;color:#0f172a">${text}</p>`;
+        const primaryLine = `<strong>主要類型（並列）：</strong>${primaryLabels}`;
+        document.getElementById('footer-abstract').innerHTML = `<div style="font-size:14px;color:#0f172a">${primaryLine}</div>`;
+
+        document.querySelectorAll('.choices').forEach(el=>el.style.display='none');
+      }
+
       function resetAll(){
         for(const k in answers) answers[k]=null;
         document.querySelectorAll('.choice-btn.selected').forEach(b=>b.classList.remove('selected'));
@@ -479,72 +283,32 @@
         document.getElementById('meta-title').textContent = '尚未開始';
         document.getElementById('meta-desc').textContent = '請從第 1 章開始。';
         document.getElementById('final-content').innerHTML = '';
+        document.getElementById('footer-abstract').innerHTML = '';
+        document.getElementById('main-type').textContent = '';
         show(1);
       }
 
-      // share functionality
+      // share & copy link
       const shareBtn = document.getElementById('share-btn');
       const copyBtn = document.getElementById('copy-link');
-
-      // Compose a simple share message and URL (uses current page URL)
-      function getSharePayload(){
-        const url = window.location.href;
-        const text = encodeURIComponent('我剛完成「LEGO 自癒工作坊」的性格測試！一起試試看： ' + url);
-        return { url, text };
+      function getSharePayload(){ const url = window.location.href; const text = encodeURIComponent('我剛完成「你的理想人生」的性格測驗！一起試試看： ' + url); return {url,text}; }
+      if(shareBtn){
+        shareBtn.addEventListener('click', async ()=>{
+          const payload = getSharePayload();
+          if(navigator.share){
+            try{ await navigator.share({ title:'你的理想人生', text: decodeURIComponent(payload.text), url: payload.url }); }catch(e){ console.error('share failed', e); copyToClipboard(payload.url); }
+          } else { window.open('https://twitter.com/intent/tweet?text=' + payload.text, '_blank'); }
+        });
       }
-
-      // Web Share API where available
-      shareBtn.addEventListener('click', async ()=>{
-        const payload = getSharePayload();
-        if(navigator.share){
-          try{
-            await navigator.share({ title: 'LEGO 自癒工作坊 — 性格測試', text: decodeURIComponent(payload.text), url: payload.url });
-          }catch(err){
-            // user canceled or failed; fallback to copy
-            alert('分享未完成，將連結複製到剪貼簿。');
-            copyToClipboard(payload.url);
-          }
-        } else {
-          // fallback: open a simple share dialog (Facebook/Twitter) in new window
-          const shareUrl = 'https://twitter.com/intent/tweet?text=' + payload.text;
-          window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=450');
-        }
-      });
-
-      // copy link to clipboard
-      copyBtn.addEventListener('click', ()=>{
-        const payload = getSharePayload();
-        copyToClipboard(payload.url);
-        copyBtn.textContent = '已複製';
-        setTimeout(()=> copyBtn.textContent = '複製連結', 2000);
-      });
-
-      function copyToClipboard(text){
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          return navigator.clipboard.writeText(text).catch(()=> fallbackCopy(text));
-        } else {
-          return fallbackCopy(text);
-        }
+      if(copyBtn){
+        copyBtn.addEventListener('click', ()=>{ copyToClipboard(getSharePayload().url); copyBtn.textContent='已複製'; setTimeout(()=> copyBtn.textContent='複製連結',2000); });
       }
-      function fallbackCopy(text){
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        try{
-          document.execCommand('copy');
-        }catch(e){}
-        document.body.removeChild(ta);
-      }
+      function copyToClipboard(t){ if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); const ta = document.createElement('textarea'); ta.value = t; ta.style.position='fixed'; ta.style.left='-9999px'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
 
-      // initialize
-      updateProgress();
-      updateMeta();
+      // initial state
+      updateProgress(); updateMeta();
 
-      // keyboard accessibility: allow Enter/Space to activate choice buttons
+      // keyboard accessibility for choices
       document.addEventListener('keydown', function(e){
         const active = document.activeElement;
         if(active && active.classList && active.classList.contains('choice-btn')){
